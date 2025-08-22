@@ -1,0 +1,86 @@
+body {
+    background-color: cadetblue;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.header {
+    align-self: center;
+    font-size: 24px;
+    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    background-color: rgb(3, 110, 110);
+    border-radius: 8px;
+    padding: 0 64px;
+    border-width: 4px;
+    border-color: rgb(1, 69, 69);
+    color: rgb(255, 255, 255);
+    border-style: solid;
+    margin-bottom: 64px;
+    flex: 1;
+}
+.container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: darkslategray;
+    border-radius: 8px;
+    width: 500px;
+    height: 500px;
+    padding: 32px 0;
+    gap: 32px;
+}
+.display {
+    background-color: ghostwhite;
+    width: 450px;
+    height: 128px;
+    border-radius: 16px;
+}
+.buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+}
+.operators {
+    display: flex;
+    gap: 32px;
+    flex-wrap: wrap;
+    margin: 0;
+    padding: 16;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: space-around;
+}
+.numbers {
+    display: flex;
+    gap: 32px;
+    flex-wrap: wrap;
+    margin: 0;
+    padding: 16;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+}
+.row {
+    display: flex;
+    gap: 32px;
+}
+button {
+    font-weight: 900;
+    width: 48px;
+    height: 48px;
+    margin: 4px;
+    font-size: 32px;
+    background-color: rgb(36, 62, 62);
+    color: azure;
+    border-radius: 64px;
+    border-style: solid;
+    border-width: 4px;
+    border-color: rgba(36, 62, 62, 0.508);
+}
+.operators button {
+    color: goldenrod;
+}
+#clear{
+    color: crimson;
+}
