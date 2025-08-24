@@ -3,8 +3,12 @@ const equation = document.querySelector("#equation");
 let firstEmpty = true, secondEmpty = true, doSecond = false;
 const numArray = Array.from(document.querySelectorAll(".number"));
 const equal = document.querySelector("#equal");
-equal.addEventListener("click", calculate);
+let complete = false;
+//let decimal = false;
+//const dot = document.querySelector("#decimal");
 
+//dot.addEventListener("click", addDecimal);
+equal.addEventListener("click", calculate);
 for (const button of numArray) {
     button.addEventListener("click", (event) => addNumberToDisplay(event));
 }
@@ -22,7 +26,7 @@ function subtract(a, b) {
     return Number(a) - Number(b);
 }
 function multiply(a, b) {
-    return Number(a) * Number(b);
+    return (Number(a) * Number(b)).toFixed(6);
 }
 function divide(a, b) {
     return (b == 0)
@@ -43,6 +47,9 @@ function operate(op, a, b) {
 }
 
 function addNumberToDisplay(event) {
+    if (complete) {
+        clearDisplay();
+    }
     let num = event.target.textContent;
     if (doSecond) {
         if (secondEmpty) {
@@ -50,7 +57,6 @@ function addNumberToDisplay(event) {
         } else {
             equation.textContent += String(num);
         }
-        second = Number(equation.textContent);
         secondEmpty = false;
         return;
     }
@@ -59,28 +65,46 @@ function addNumberToDisplay(event) {
     } else {
         equation.textContent += String(num);
     }
-    first = Number(equation.textContent);
     firstEmpty = false;
 }
 
 function setOperator(event) {
     if (firstEmpty) return;
+
     if (!firstEmpty && !secondEmpty) {
         calculate();
     }
+    if (complete) {
+        complete = false;
+    }
     operator = event.target.textContent;
+    first = Number(equation.textContent);
     doSecond = true;
 }
+// function addDecimal() {
+//     // if (rewrite || decimal) return;
+//     if(decimal) return;
+//     if (firstEmpty) {
+//         firstEmpty = false;
+//     } else if (doSecond && secondEmpty) {
+//         secondEmpty = false;
+//     }
+//     equation.textContent += ".";
+//     decimal = true;
+//     dot.style.backgroundColor = "rgb(3, 62, 62)";
+// }
 
 function calculate() {
     if (firstEmpty || secondEmpty) return;
-    const res = operate(operator, first, second);
+    second = Number(equation.textContent);
+    let res = operate(operator, first, second);
     equation.textContent = String(res);
     first = res;
     second = 0;
     doSecond = false;
     secondEmpty = true;
     firstEmpty = false;
+    complete = true;
 }
 
 function clearDisplay() {
@@ -89,4 +113,8 @@ function clearDisplay() {
     first = second = 0;
     doSecond = false;
     operator = undefined;
+    complete = false;
+    operator = undefined;
+    //decimal = false;
+    // dot.style.backgroundColor = "rgb(36, 62, 62)";
 }
