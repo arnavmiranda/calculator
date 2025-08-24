@@ -27,7 +27,7 @@ body {
     border-radius: 8px;
     width: 500px;
     height: 500px;
-    padding: 32px 0;
+    padding: 48px 16px;
     gap: 32px;
 }
 .display {
@@ -35,6 +35,14 @@ body {
     width: 450px;
     height: 128px;
     border-radius: 16px;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+}
+#equation {
+    font-size: 64px;
+    padding: 32px;
+    font-weight: 500;
 }
 .buttons {
     display: flex;
@@ -67,9 +75,8 @@ body {
 }
 button {
     font-weight: 900;
-    width: 48px;
-    height: 48px;
-    margin: 4px;
+    width: 72px;
+    height: 72px;
     font-size: 32px;
     background-color: rgb(36, 62, 62);
     color: azure;
@@ -77,10 +84,22 @@ button {
     border-style: solid;
     border-width: 4px;
     border-color: rgba(36, 62, 62, 0.508);
+    margin: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+button:hover {
+    background-color: rgb(78, 123, 123);
+    padding: 36px;
+}
+button:active {
+    transform: translateY(5px);
+    box-shadow: 0 2px 0 rgba(36, 62, 62, 0.577);
 }
 .operators button {
     color: goldenrod;
 }
-#clear{
+#clear {
     color: crimson;
 }
