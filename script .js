@@ -1,13 +1,11 @@
-let first = 0, second = 0, operator;
+let first = second = operator = null;
 const equation = document.querySelector("#equation");
-let firstEmpty = true, secondEmpty = true, doSecond = false;
+let waitingForOperand = false, justCalculated = false, isDecimal = false;
 const numArray = Array.from(document.querySelectorAll(".number"));
 const equal = document.querySelector("#equal");
-let complete = false;
-//let decimal = false;
-//const dot = document.querySelector("#decimal");
+const decimal = document.querySelector('#decimal');
 
-//dot.addEventListener("click", addDecimal);
+decimal.addEventListener("click", addDecimal);
 equal.addEventListener("click", calculate);
 for (const button of numArray) {
     button.addEventListener("click", (event) => addNumberToDisplay(event));
@@ -20,19 +18,21 @@ const clear = document.querySelector("#clear");
 clear.addEventListener("click", clearDisplay);
 
 function add(a, b) {
-    return Number(a) + Number(b);
+    return a + b;
 }
 function subtract(a, b) {
-    return Number(a) - Number(b);
+    return a - b;
 }
 function multiply(a, b) {
-    return (Number(a) * Number(b)).toFixed(6);
+    return a * b;
 }
 function divide(a, b) {
-    return (b == 0)
-        ? 0
-        : +(Number(a) / Number(b)).toFixed(6);
-}
+    if (b === 0) {
+        return "ERROR"; 
+    } else {
+        return a / b;
+    }
+} 
 function operate(op, a, b) {
     switch (op) {
         case '+':
@@ -43,78 +43,140 @@ function operate(op, a, b) {
             return multiply(a, b);
         case '/':
             return divide(a, b);
+        default:
+            return b;
     }
+}
+function formatResult(result) {
+    if (result === 'ERROR') { 
+        return result;
+    }
+    const rounded = result.toFixed(6);
+
+    return parseFloat(rounded.toString()).toString();
+}
+
+function addDecimal() {
+    if (isDecimal) {
+        return;
+    }
+    if (equation.textContent === 'ERROR') { 
+        return;
+    }
+    if (justCalculated) {
+        equation.textContent = '0.';
+        justCalculated = false;
+        waitingForOperand = false;
+        resetDecimalState(); 
+        isDecimal = true; 
+        changeDecimalColor();
+        return;
+    }
+    if (waitingForOperand) {
+        equation.textContent = '0.';
+        waitingForOperand = false;
+        resetDecimalState(); 
+        isDecimal = true; 
+        changeDecimalColor();
+    } else {
+        if (equation.textContent.indexOf('.') === -1) {
+            equation.textContent += '.';
+            isDecimal = true; 
+            changeDecimalColor();
+        }
+    }
+}
+
+function changeDecimalColor() {
+    decimal.style.backgroundColor = "rgba(9, 62, 62, 1)";
+}
+
+function resetDecimalState() {
+    isDecimal = false;
+    decimal.style.backgroundColor = "rgb(36, 62, 62)";
 }
 
 function addNumberToDisplay(event) {
-    if (complete) {
-        clearDisplay();
-    }
-    let num = event.target.textContent;
-    if (doSecond) {
-        if (secondEmpty) {
-            equation.textContent = String(num);
-        } else {
-            equation.textContent += String(num);
-        }
-        secondEmpty = false;
+    let digit = event.target.textContent;
+
+    if (justCalculated) {
+        equation.textContent = digit;
+        justCalculated = false;
+        waitingForOperand = false;
+        resetDecimalState(); 
         return;
     }
-    if (firstEmpty) {
-        equation.textContent = String(num);
+
+    if (waitingForOperand) {
+        equation.textContent = digit;
+        waitingForOperand = false;
+        resetDecimalState(); 
     } else {
-        equation.textContent += String(num);
+        if (equation.textContent === '0') {
+            equation.textContent = digit;
+        } else {
+            equation.textContent += digit;
+        }
     }
-    firstEmpty = false;
 }
 
 function setOperator(event) {
-    if (firstEmpty) return;
+    const nextOperator = event.target.textContent;
+    const inputValue = parseFloat(equation.textContent);
 
-    if (!firstEmpty && !secondEmpty) {
-        calculate();
+    if (equation.textContent === 'ERROR') {
+        return;
     }
-    if (complete) {
-        complete = false;
+
+    if (first === null) {
+        first = inputValue;
+    } else if (operator && !waitingForOperand) {
+        second = inputValue;
+        const result = operate(operator, first, second);
+
+        if (result === 'ERROR') { 
+            equation.textContent = 'ERROR';
+            first = second = operator = null;
+            waitingForOperand = false;
+            resetDecimalState(); 
+            return;
+        }
+
+        equation.textContent = formatResult(result);
+        first = result;
     }
-    operator = event.target.textContent;
-    first = Number(equation.textContent);
-    doSecond = true;
+
+    waitingForOperand = true;
+    operator = nextOperator;
+    justCalculated = false;
 }
-// function addDecimal() {
-//     // if (rewrite || decimal) return;
-//     if(decimal) return;
-//     if (firstEmpty) {
-//         firstEmpty = false;
-//     } else if (doSecond && secondEmpty) {
-//         secondEmpty = false;
-//     }
-//     equation.textContent += ".";
-//     decimal = true;
-//     dot.style.backgroundColor = "rgb(3, 62, 62)";
-// }
 
 function calculate() {
-    if (firstEmpty || secondEmpty) return;
-    second = Number(equation.textContent);
-    let res = operate(operator, first, second);
-    equation.textContent = String(res);
-    first = res;
-    second = 0;
-    doSecond = false;
-    secondEmpty = true;
-    firstEmpty = false;
-    complete = true;
+    const inputValue = parseFloat(equation.textContent);
+
+    if (equation.textContent === "ERROR" || first === null || operator === null || waitingForOperand) {
+        return;
+    }
+
+    second = inputValue;
+    const result = operate(operator, first, second);
+
+    if (result === 'ERROR') {
+        equation.textContent = 'ERROR';
+        resetDecimalState(); 
+    } else {
+        equation.textContent = formatResult(result);
+        first = result;
+    }
+    
+    second = operator = null;
+    waitingForOperand = false;
+    justCalculated = true;
 }
 
 function clearDisplay() {
-    firstEmpty = secondEmpty = true;
     equation.textContent = '0';
-    first = second = 0;
-    doSecond = false;
-    operator = undefined;
-    complete = false;
-    operator = undefined;
-    //decimal = false;
-    // dot.style.backgroundColor = "rgb(36, 62, 62)";
+    first = second = operator = null;
+    waitingForOperand = justCalculated = false;
+    resetDecimalState();
 }
